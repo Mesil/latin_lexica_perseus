@@ -38,7 +38,14 @@ def parse_word(word, lang):
         except AttributeError:
             pass
         word['definition'] = lemma.find(class_="lemma_definition").text.strip()
-        word['pos'] = lemma.find("table").find("tr").find_all("td")[1].text.strip()
+        # 'word['pos'] = lemma.find("table").find("tr").find_all("td")[1].text.strip()' 
+        # the previous method for scraping pos data only retrieved the first possible pos for a given word form
+        possible_forms_list = lemma.find("table").find_all("tr")
+        pos_counter = 0
+        for i in possible_forms_list:
+            pos_counter += 1
+            composed_word_key = (str('pos' + str(pos_counter)))
+            word[composed_word_key] = i.find_all("td")[1].text.strip()
         word_list.insert(index, word)
         index += 1
 
